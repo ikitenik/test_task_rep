@@ -34,7 +34,7 @@ def delete(url_delete, pk=None):
 
 url = 'http://localhost:8000/api/materials/'  # Полный адрес эндпоинта
 url_type = 'http://localhost:8000/api/material_types/'
-url_tree = 'http://localhost:8000/api/categories/'
+url_tree = 'http://localhost:8000/api/categories/tree/'
 data = {
     'type': 26,
     'material_name': 'BeforeTes1t2',

@@ -2,20 +2,29 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.http import Http404
 from .models import Materials, MaterialTypes, Categories
-from .serializers import MaterialSerializer, MaterialTypesSerializer
+from .serializers import MaterialSerializer, MaterialTypesSerializer, CategoriesSerializer
 from .serializers import TreeMaterialSerializer, TreeMaterialTypesSerializer, TreeCategoriesSerializer
 import pandas as pd
 
 
 class CategoriesAPIView(APIView):
-    def get(self, request):
-        queryset = Categories.objects.prefetch_related('types__materials').all()
-        serializer = TreeCategoriesSerializer(queryset, many=True)
-        return Response(serializer.data)
+    def get(self, request, param=None):
+        if param == "tree":
+            categories = Categories.objects.prefetch_related('types__materials').all()
+            categories_serializer = TreeCategoriesSerializer(categories, many=True)
+            data = {
+                'dict_name': 'Автомобильные запчасти',
+                'categories': categories_serializer.data
+            }
+            return Response(data)
+
+        elif not param:
+            categories = Categories.objects.all()
+            categories_serializer = CategoriesSerializer(categories, many=True)
+            return Response(categories_serializer.data)
 
 
 class MaterialTypesAPIView(APIView):
-
     def get_object(self, pk):
         try:
             return MaterialTypes.objects.get(pk=pk)
@@ -52,21 +61,7 @@ class MaterialTypesAPIView(APIView):
         return Response({'message': 'Material Type deleted successfully'})
 
 
-
 class MaterialAPIView(APIView):
-    '''
-    def get(self, request):
-        # Получаем набор всех записей из таблицы Capital
-        queryset = Materials.objects.all()
-        print(f'{queryset=}')
-        # Сериализуем извлечённый набор записей
-        serializer_for_queryset = MaterialSerializer(
-            instance=queryset, # Передаём набор записей
-            many=True # Указываем, что на вход подаётся именно набор записей
-        )
-        return Response(serializer_for_queryset.data)
-    '''
-
     def get_object(self, pk):
         try:
             return Materials.objects.get(pk=pk)
@@ -115,6 +110,7 @@ class UploadExcelAPIView(APIView):
 
         # Список для хранения сериализованных данных
         created_objects = []
+        # Список для хранения ошибок сериализации
         errors = []
         for _, row in excel_file.iterrows():
             data = {
