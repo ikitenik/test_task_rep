@@ -1,11 +1,58 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.http import Http404
-from .models import Materials
-from .serializers import MaterialSerializer
+from .models import Materials, MaterialTypes, Categories
+from .serializers import MaterialSerializer, MaterialTypesSerializer
+from .serializers import TreeMaterialSerializer, TreeMaterialTypesSerializer, TreeCategoriesSerializer
 import pandas as pd
 
-# Create your views here.
+
+class CategoriesAPIView(APIView):
+    def get(self, request):
+        queryset = Categories.objects.prefetch_related('types__materials').all()
+        serializer = TreeCategoriesSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+
+class MaterialTypesAPIView(APIView):
+
+    def get_object(self, pk):
+        try:
+            return MaterialTypes.objects.get(pk=pk)
+        except MaterialTypes.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk=None, format=None):
+        if pk:
+            material_types = self.get_object(pk)
+            serializer = MaterialTypesSerializer(material_types)
+        else:
+            material_types = MaterialTypes.objects.all()
+            serializer = MaterialTypesSerializer(material_types, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        serializer = MaterialTypesSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Material Type Created Successfully', 'data': serializer.data})
+        return Response(serializer.errors, status=400)
+
+    def put(self, request, pk=None, format=None):
+        material_types = self.get_object(pk)
+        serializer = MaterialTypesSerializer(material_types, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Material Type Updated Successfully', 'data': serializer.data})
+        return Response(serializer.errors, status=400)
+
+    def delete(self, request, pk, format=None):
+        material_types = self.get_object(pk)
+        material_types.delete()
+        return Response({'message': 'Material Type deleted successfully'})
+
+
+
 class MaterialAPIView(APIView):
     '''
     def get(self, request):

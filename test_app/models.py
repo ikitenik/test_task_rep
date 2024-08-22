@@ -19,7 +19,7 @@ class Categories(models.Model):
 
 class MaterialTypes(models.Model):
     type_id = models.AutoField(primary_key=True)
-    category = models.ForeignKey(Categories, models.DO_NOTHING)
+    category = models.ForeignKey(Categories, on_delete=models.CASCADE, related_name='types')
     type_name = models.TextField()
 
     class Meta:
@@ -29,7 +29,7 @@ class MaterialTypes(models.Model):
 
 class Materials(models.Model):
     material_id = models.AutoField(primary_key=True)
-    type = models.ForeignKey(MaterialTypes, models.DO_NOTHING)
+    type = models.ForeignKey(MaterialTypes, on_delete=models.CASCADE, related_name='materials')
     material_name = models.TextField()
     material_price = models.DecimalField(max_digits=11, decimal_places=2)
 
