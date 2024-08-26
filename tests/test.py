@@ -2,7 +2,7 @@ import requests
 
 
 def answer(response):
-    if response.status_code == 200:
+    if response.status_code == 200 or response.status_code == 201:
         print('Success:', response.json())
     else:
         print('Failed:', response.status_code, response.text)
@@ -32,22 +32,19 @@ def delete(url_delete, pk=None):
     answer(response_delete)
 
 
-url = 'http://localhost:8000/api/materials/'  # Полный адрес эндпоинта
-url_type = 'http://localhost:8000/api/material_types/'
-url_tree = 'http://localhost:8000/api/categories/tree/'
+url = 'http://localhost:8000/api/human/nobd/'  # Полный адрес эндпоинта
 data = {
-    'type': 26,
-    'material_name': 'BeforeTes1t2',
-    'material_price': 1000
-}
-data_type = {
-    'category': 2,
-    'type_name': 'AfterTest'
+    'human_name': "Artem",
+    'human_age': 23,
+    'human_length': 180,
+    'human_weight': 105,
 }
 
-#get(url_type, 2)
+
+post(url, data)
+#get(url)
 #delete(url, 37)
 #put(url, 1, data)
 #post(url_type, data_type)
 #get(url_type)
-get(url_tree)
+#get(url_tree)
