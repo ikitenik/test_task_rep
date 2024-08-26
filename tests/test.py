@@ -32,17 +32,31 @@ def delete(url_delete, pk=None):
     answer(response_delete)
 
 
-url = 'http://localhost:8000/api/human/nobd/'  # Полный адрес эндпоинта
-data = {
-    'human_name': "Artem",
-    'human_age': 23,
-    'human_length': 180,
-    'human_weight': 105,
+url_mat = 'http://localhost:8000/api/materials/'  # Полный адрес эндпоинта
+url_type = 'http://localhost:8000/api/material_types/'
+url_cat = 'http://localhost:8000/api/categories/list/'
+
+data_mat = {
+    'type': 2,
+    'material_name': "Дверь задняя Toyota Ractis",
+    'material_price': -3333,
 }
 
+data_type = {
 
-post(url, data)
-#get(url)
+}
+
+data_cat = {
+    'category_name': "Test_cat"
+}
+
+#post(url, data)
+#put(url, 2, data)
+#post(url_cat, data_cat)
+#get(url_cat)
+#delete(url_cat, 6)
+#put(url_cat, 5, data_cat)
+get(url_cat)
 #delete(url, 37)
 #put(url, 1, data)
 #post(url_type, data_type)

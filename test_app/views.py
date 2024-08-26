@@ -4,25 +4,63 @@ from rest_framework import status
 from django.http import Http404
 from .models import Materials, MaterialTypes, Categories
 from .serializers import MaterialSerializer, MaterialTypesSerializer, CategoriesSerializer
-from .serializers import TreeMaterialSerializer, TreeMaterialTypesSerializer, TreeCategoriesSerializer
+#from .serializers import TreeMaterialSerializer, TreeMaterialTypesSerializer, TreeCategoriesSerializer
 import pandas as pd
 
 
 class CategoriesAPIView(APIView):
-    def get(self, request, param=None):
-        if param == "tree":
+    def get_object(self, pk):
+        try:
+            return Categories.objects.get(pk=pk)
+        except Categories.DoesNotExist:
+            raise Http404
+
+    def get(self, request, param=None, pk=None):
+        # Вывод плоским списком
+        if param == "list":
+            categories = Materials.objects.all()
+            categories_serializer = MaterialSerializer(categories, many=True, context={'condition': "list"})
+            return Response(categories_serializer.data, status=status.HTTP_200_OK)
+
+        # Вывод деревом
+        elif param == "tree":
             categories = Categories.objects.prefetch_related('types__materials').all()
-            categories_serializer = TreeCategoriesSerializer(categories, many=True)
+            categories_serializer = CategoriesSerializer(categories, many=True, context={'condition': "tree"})
             data = {
                 'dict_name': 'Автомобильные запчасти',
                 'categories': categories_serializer.data
             }
             return Response(data, status=status.HTTP_200_OK)
 
+        # Вывод только категорий
         elif not param:
-            categories = Categories.objects.all()
-            categories_serializer = CategoriesSerializer(categories, many=True)
-            return Response(categories_serializer.data, status=status.HTTP_200_OK)
+            if pk:
+                category = self.get_object(pk)
+                serializer = CategoriesSerializer(category)
+            else:
+                categories = Categories.objects.all()
+                serializer = CategoriesSerializer(categories, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = CategoriesSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Категория успешно добавлена', 'data': serializer.data})
+        return Response(serializer.errors, status=400)
+
+    def put(self, request, pk=None):
+        category = self.get_object(pk)
+        serializer = CategoriesSerializer(category, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Категория успешно обновлена', 'data': serializer.data})
+        return Response(serializer.errors, status=400)
+
+    def delete(self, request, pk):
+        type = self.get_object(pk)
+        type.delete()
+        return Response({'message': 'Категория успешно удалена'})
 
 
 class MaterialTypesAPIView(APIView):
@@ -35,10 +73,10 @@ class MaterialTypesAPIView(APIView):
     def get(self, request, pk=None):
         if pk:
             material_types = self.get_object(pk)
-            serializer = MaterialTypesSerializer(material_types)
+            serializer = MaterialTypesSerializer(material_types, context={'condition': "testа"})
         else:
             material_types = MaterialTypes.objects.all()
-            serializer = MaterialTypesSerializer(material_types, many=True)
+            serializer = MaterialTypesSerializer(material_types, many=True, context={'condition': "privet"})
         return Response(serializer.data)
 
     def post(self, request):
@@ -75,14 +113,14 @@ class MaterialAPIView(APIView):
             serializer = MaterialSerializer(material)
         else:
             materials = Materials.objects.all()
-            serializer = MaterialSerializer(materials, many=True)
+            serializer = MaterialSerializer(materials)
         return Response(serializer.data)
 
     def post(self, request):
         serializer = MaterialSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({'message': 'Detail Created Successfully', 'data': serializer.data})
+            return Response({'message': 'Материал успешно добавление в справочник', 'data': serializer.data})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, pk=None):
@@ -90,21 +128,21 @@ class MaterialAPIView(APIView):
         serializer = MaterialSerializer(material, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response({'message': 'Detail Updated Successfully', 'data': serializer.data})
+            return Response({'message': 'Данные материала успешно обновлены', 'data': serializer.data})
         return Response(serializer.errors, status=400)
 
     def delete(self, request, pk):
         material = self.get_object(pk)
         material.delete()
-        return Response({'message': 'Material deleted successfully'})
+        return Response({'message': 'Материал успешно удалён из справочника'})
 
 
 class UploadExcelAPIView(APIView):
-    def post(self, request, *args, **kwargs):
-        file = request.FILES.get('file')  # Получаем загруженный файл
+    def post(self, request):
+        file = request.FILES.get('file')
         if not file:
-            return Response({'error': 'No file uploaded'}, status=400)
-        # Чтение Excel-файла с помощью pandas
+            return Response({'error': 'Файл не загружен'}, status=400)
+        # Чтение Excel с помощью pandas
         excel_file = pd.read_excel(file)
         # Список для хранения сериализованных данных
         created_objects = []
@@ -112,7 +150,7 @@ class UploadExcelAPIView(APIView):
         errors = []
         for _, row in excel_file.iterrows():
             data = {
-                'type': row.get('type_id'),  # Замените на имя столбца из Excel
+                'type': row.get('type_id'),
                 'material_name': row.get('material_name'),
                 'material_price': row.get('material_price')
             }
@@ -125,6 +163,6 @@ class UploadExcelAPIView(APIView):
                 errors.append(serializer.errors)
 
         if errors:
-            return Response({'errors': errors}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'Ошибки': errors}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response({'created_objects': created_objects}, status=status.HTTP_201_CREATED)
+        return Response({'Добавленные материалы': created_objects}, status=status.HTTP_201_CREATED)
