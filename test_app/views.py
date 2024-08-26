@@ -4,7 +4,6 @@ from rest_framework import status
 from django.http import Http404
 from .models import Materials, MaterialTypes, Categories
 from .serializers import MaterialSerializer, MaterialTypesSerializer, CategoriesSerializer
-#from .serializers import TreeMaterialSerializer, TreeMaterialTypesSerializer, TreeCategoriesSerializer
 import pandas as pd
 
 
@@ -27,8 +26,10 @@ class CategoriesAPIView(APIView):
             categories = Categories.objects.prefetch_related('types__materials').all()
             categories_serializer = CategoriesSerializer(categories, many=True, context={'condition': "tree"})
             data = {
-                'dict_name': 'Автомобильные запчасти',
-                'categories': categories_serializer.data
+                'car_dict': {
+                    'name': 'Автомобильные запчасти',
+                    'categories': categories_serializer.data
+                }
             }
             return Response(data, status=status.HTTP_200_OK)
 
@@ -73,17 +74,17 @@ class MaterialTypesAPIView(APIView):
     def get(self, request, pk=None):
         if pk:
             material_types = self.get_object(pk)
-            serializer = MaterialTypesSerializer(material_types, context={'condition': "testа"})
+            serializer = MaterialTypesSerializer(material_types)
         else:
             material_types = MaterialTypes.objects.all()
-            serializer = MaterialTypesSerializer(material_types, many=True, context={'condition': "privet"})
+            serializer = MaterialTypesSerializer(material_types, many=True)
         return Response(serializer.data)
 
     def post(self, request):
         serializer = MaterialTypesSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({'message': 'Material Type Created Successfully', 'data': serializer.data})
+            return Response({'message': 'Тип материала успешно создан', 'data': serializer.data})
         return Response(serializer.errors, status=400)
 
     def put(self, request, pk=None):
@@ -91,13 +92,13 @@ class MaterialTypesAPIView(APIView):
         serializer = MaterialTypesSerializer(material_types, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response({'message': 'Material Type Updated Successfully', 'data': serializer.data})
+            return Response({'message': 'Тип материала успешно обновлен', 'data': serializer.data})
         return Response(serializer.errors, status=400)
 
     def delete(self, request, pk):
         material_types = self.get_object(pk)
         material_types.delete()
-        return Response({'message': 'Material Type deleted successfully'})
+        return Response({'message': 'Тип материала успешно удалён'})
 
 
 class MaterialAPIView(APIView):
@@ -113,14 +114,14 @@ class MaterialAPIView(APIView):
             serializer = MaterialSerializer(material)
         else:
             materials = Materials.objects.all()
-            serializer = MaterialSerializer(materials)
+            serializer = MaterialSerializer(materials, many=True)
         return Response(serializer.data)
 
     def post(self, request):
         serializer = MaterialSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({'message': 'Материал успешно добавление в справочник', 'data': serializer.data})
+            return Response({'message': 'Материал успешно добавлен в справочник', 'data': serializer.data})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, pk=None):

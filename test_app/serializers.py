@@ -4,6 +4,7 @@ from django.db.models import Sum
 import logging
 logger = logging.getLogger(__name__)
 
+
 # Выводим материалы в виде дерева с подсчетом сумм
 class MaterialSerializer(serializers.ModelSerializer):
     # Определяем начальные поля сериализатора модели Materials
@@ -17,7 +18,7 @@ class MaterialSerializer(serializers.ModelSerializer):
         if value < 0:
             raise serializers.ValidationError("Стоимость материала не может быть отрицательной")
         return value
-
+    
     # Переопределение инициализации сериализатора для вывода плоского списка
     def __init__(self, *args, **kwargs):
         context = kwargs.get('context', {})
@@ -26,16 +27,16 @@ class MaterialSerializer(serializers.ModelSerializer):
         # Если надо вывести плоский список
         if condition == 'list':
             # Берём данные по внешнему ключу
-            self.fields["category_name"] = serializers.CharField(source='type.category.category_name', read_only=True)
-            self.fields["type_name"] = serializers.CharField(source='type.type_name', read_only=True)
+            self.fields["category_info"] = serializers.SerializerMethodField()
+            #self.fields["type_name"] = serializers.CharField(source='type.type_name', read_only=True)
+            self.fields["type_info"] = serializers.SerializerMethodField()
             # Добавляем перед выводом название справочника
             self.fields["dict_name"] = serializers.SerializerMethodField()
             self.fields = {
                 'dict_name': self.fields['dict_name'],
-                'category_name': self.fields['category_name'],
-                'type_name': self.fields['type_name'],
+                'category_info': self.fields['category_info'],
+                'type_info': self.fields['type_info'],
                 'material_id': self.fields['material_id'],
-                'type': self.fields['type'],
                 'material_name': self.fields['material_name'],
                 'material_price': self.fields['material_price']
             }
@@ -43,6 +44,18 @@ class MaterialSerializer(serializers.ModelSerializer):
     def get_dict_name(self, obj):
         return "Автомобильные запчасти"
 
+    def get_type_info(self, obj):
+        serializer = MaterialTypesSerializer(obj.type)
+        return {
+            'type_id': serializer.data.get('type_id'),
+            'type_name': serializer.data.get('type_name')
+        }
+
+    def get_category_info(self, obj):
+        serializer = CategoriesSerializer(obj.type.category)
+        return serializer.data
+
+# Сериализатор для типов материалов
 class MaterialTypesSerializer(serializers.ModelSerializer):
     class Meta:
         model = MaterialTypes
@@ -53,29 +66,24 @@ class MaterialTypesSerializer(serializers.ModelSerializer):
         context = kwargs.get('context', {})
         condition = context.get('condition')
         super(MaterialTypesSerializer, self).__init__(*args, **kwargs)
-        #self.fields['condition'] = serializers.SerializerMethodField()
         if condition == 'tree':
             self.Meta.fields = ['type_id', 'type_name']
             self.fields['type_price'] = serializers.SerializerMethodField()
             self.fields['materials'] = MaterialSerializer(many=True)
-
-
-    def get_check(self, obj):
-        # Используем метод aggregate для подсчета общей стоимости
-        return
 
     def get_type_price(self, obj):
         # Используем метод aggregate для подсчета общей стоимости
         return obj.materials.aggregate(type_price=Sum('material_price'))['type_price'] or 0
 
 
+# Сериализатор для категорий
 class CategoriesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Categories
-        #fields = ['category_name', 'types', 'category_price']
         fields = ['category_id', 'category_name']
         read_only_fields = ['category_id']
 
+# Для вывода в виде дерева
     def __init__(self, *args, **kwargs):
         context = kwargs.get('context', {})
         condition = context.get('condition')

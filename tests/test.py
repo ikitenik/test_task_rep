@@ -32,9 +32,9 @@ def delete(url_delete, pk=None):
     answer(response_delete)
 
 
-url_mat = 'http://localhost:8000/api/materials/'  # Полный адрес эндпоинта
+url_mat = 'http://localhost:8000/api/materials/'
 url_type = 'http://localhost:8000/api/material_types/'
-url_cat = 'http://localhost:8000/api/categories/list/'
+url_cat = 'http://localhost:8000/api/categories/'
 
 data_mat = {
     'type': 2,
@@ -50,15 +50,9 @@ data_cat = {
     'category_name': "Test_cat"
 }
 
-#post(url, data)
+#delete(url_mat, 97)
 #put(url, 2, data)
 #post(url_cat, data_cat)
-#get(url_cat)
-#delete(url_cat, 6)
-#put(url_cat, 5, data_cat)
-get(url_cat)
-#delete(url, 37)
-#put(url, 1, data)
-#post(url_type, data_type)
+get(url_cat, "list")
 #get(url_type)
-#get(url_tree)
+
