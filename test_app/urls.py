@@ -1,16 +1,11 @@
 from django.urls import path
-
+from rest_framework.routers import DefaultRouter
 from . import views
+router = DefaultRouter()
+router.register(r'categories', views.CategoryViewSet)
+router.register(r'flat', views.FlatCategoryViewSet, basename='flat_category')
+router.register(r'materials', views.MaterialViewSet)
 
 urlpatterns = [
-    path('categories/', views.CategoriesAPIView.as_view()),
-    path('categories/<int:pk>/', views.CategoriesAPIView.as_view()),
-    path('categories/<str:param>/', views.CategoriesAPIView.as_view()),
-
-    path('material_types/', views.MaterialTypesAPIView.as_view()),
-    path('material_types/<int:pk>/', views.MaterialTypesAPIView.as_view()),
-
-    path('materials/', views.MaterialAPIView.as_view()),
-    path('materials/<int:pk>/', views.MaterialAPIView.as_view()),
     path('upload/', views.UploadExcelAPIView.as_view()),
-]
+] + router.urls

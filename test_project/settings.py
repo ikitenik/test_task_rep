@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'mptt',
     'test_app'
 
 ]
@@ -74,13 +75,13 @@ WSGI_APPLICATION = 'test_project.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+# https://docs.djangoproject.com/en/5.1/ref/settings/#databmaterialtypesases
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'testdb',  #your database name
-        'USER': 'postgres',        'PASSWORD': 'FwArtem123!',   #your database password
+        'NAME': 'CarShop',
+        'USER': 'postgres',        'PASSWORD': 'FwArtem123!',
         'HOST': 'localhost',
         'PORT': '5432',
     }

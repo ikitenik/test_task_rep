@@ -33,26 +33,25 @@ def delete(url_delete, pk=None):
 
 
 url_mat = 'http://localhost:8000/api/materials/'
-url_type = 'http://localhost:8000/api/material_types/'
-url_cat = 'http://localhost:8000/api/categories/'
-
 data_mat = {
-    'type': 2,
-    'material_name': "Дверь задняя Toyota Ractis",
-    'material_price': -3333,
+    'category': 5,
+    'name': "Дверь вроде бы",
+    'price': 3000,
 }
 
-data_type = {
-
-}
-
+url_cat = 'http://localhost:8000/api/categories/'
 data_cat = {
-    'category_name': "Test_cat"
+     "name": "Воздушные фильтры",
+     "parent": 9,
+     "children": None
 }
 
-#delete(url_mat, 97)
+url_cat_list = 'http://localhost:8000/api/flat/'
+#post(url_cat, data_cat)
+#post(url_mat, data_mat)
+get(url_cat_list)
 #put(url, 2, data)
 #post(url_cat, data_cat)
-get(url_cat, "list")
+#post(url_mat, data_mat)
 #get(url_type)
 
