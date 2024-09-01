@@ -56,16 +56,8 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class FlatCategorySerializer(serializers.ModelSerializer):
-    full_name = serializers.SerializerMethodField()
 
     class Meta:
         model = Category
-        fields = ['full_name']
+        fields = ['id', 'name']
 
-    def get_full_name(self, obj):
-        names = [obj.name]
-        parent = obj.parent
-        while parent is not None:
-            names.insert(0, parent.name)
-            parent = parent.parent
-        return ' '.join(names)
