@@ -57,6 +57,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class FlatCategorySerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
+
     class Meta:
         model = Category
         fields = ['full_name']
@@ -68,4 +69,3 @@ class FlatCategorySerializer(serializers.ModelSerializer):
             names.insert(0, parent.name)
             parent = parent.parent
         return ' '.join(names)
-    
