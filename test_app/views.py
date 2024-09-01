@@ -3,14 +3,25 @@ from rest_framework.views import APIView
 from rest_framework import status
 from django.http import Http404
 from .models import Material, Category
-from .serializers import MaterialSerializer, CategorySerializer, FlatCategorySerializer
+from .serializers import MaterialSerializer, TreeCategorySerializer, FlatCategorySerializer
 import pandas as pd
 from rest_framework.viewsets import ModelViewSet
 
 
-class CategoryViewSet(ModelViewSet):
-    queryset = Category.objects.filter(parent__isnull=True)
-    serializer_class = CategorySerializer
+class TreeCategoryViewSet(ModelViewSet):
+    queryset = Category.objects.all()
+
+    # queryset для get-запросов
+    def get_queryset(self):
+        if self.request.method == 'GET':
+            category_id = self.kwargs.get('pk')
+            # Если необходимо вывести часть дерева
+            if category_id is not None:
+                return Category.objects.get(id=category_id).get_family()
+            # Если необходимо вывести все дерево
+            return Category.objects.filter(parent__isnull=True)
+
+    serializer_class = TreeCategorySerializer
 
 
 class FlatCategoryViewSet(ModelViewSet):

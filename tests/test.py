@@ -2,10 +2,15 @@ import requests
 
 
 def answer(response):
+    if response.status_code == 204:
+        print('Success')
+        return
+
     if response.status_code == 200 or response.status_code == 201:
         print('Success:', response.json())
-    else:
-        print('Failed:', response.status_code, response.text)
+        return
+
+    print('Failed:', response.status_code, response.text)
 
 
 def get(url_get, pk=None):
@@ -39,20 +44,22 @@ data_mat = {
     'price': 3000,
 }
 
-url_cat = 'http://localhost:8000/api/categories/'
+url_cat_tree = 'http://localhost:8000/api/categories/'
+url_cat_list = 'http://localhost:8000/api/flat/'
 data_cat = {
-     "name": "Воздушные фильтры",
-     "parent": 9,
-     "children": None
+     "name": "Test12",
+     "parent": 21,
 }
 
-url_cat_list = 'http://localhost:8000/api/flat/'
-#post(url_cat, data_cat)
+
+#post(url_cat_list, data_cat)
+#delete(url_cat_list, 26)
+#put(url_cat, 25, data_cat)
 #post(url_mat, data_mat)
-get(url_cat)
-get(url_cat_list)
+#get(url_cat_tree, 21)
+#get(url_cat_list)
 #put(url, 2, data)
-#post(url_cat, data_cat)
+post(url_cat_tree, data_cat)
 #post(url_mat, data_mat)
 #get(url_type)
 

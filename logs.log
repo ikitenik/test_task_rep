@@ -1,0 +1,23 @@
+Watching for file changes with StatReloader
+Not Found: /api/categories/25/
+"DELETE /api/categories/25/ HTTP/1.1" 404 49
+Not Found: /categories/25/
+"DELETE /categories/25/ HTTP/1.1" 404 2373
+"GET /api/categories/ HTTP/1.1" 200 4808
+D:\Работа\Проекты\Тестовое\test_task_rep\test_app\views.py changed, reloading.
+Watching for file changes with StatReloader
+"GET /api/categories/ HTTP/1.1" 200 4808
+D:\Работа\Проекты\Тестовое\test_task_rep\test_app\views.py changed, reloading.
+Watching for file changes with StatReloader
+D:\Работа\Проекты\Тестовое\test_task_rep\test_app\views.py changed, reloading.
+Watching for file changes with StatReloader
+"DELETE /api/categories/25/ HTTP/1.1" 204 0
+D:\Работа\Проекты\Тестовое\test_task_rep\test_app\views.py changed, reloading.
+Watching for file changes with StatReloader
+D:\Работа\Проекты\Тестовое\test_task_rep\test_app\views.py changed, reloading.
+Watching for file changes with StatReloader
+D:\Работа\Проекты\Тестовое\test_task_rep\test_app\views.py changed, reloading.
+Watching for file changes with StatReloader
+D:\Работа\Проекты\Тестовое\test_task_rep\test_app\views.py changed, reloading.
+Watching for file changes with StatReloader
+D:\Работа\Проекты\Тестовое\test_task_rep\test_project\settings.py changed, reloading.

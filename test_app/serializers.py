@@ -21,12 +21,12 @@ class MaterialSerializer(serializers.ModelSerializer):
 
 class RecursiveField(serializers.Serializer):
     def to_representation(self, value):
-        serializer = CategorySerializer(value, context=self.context)
+        serializer = TreeCategorySerializer(value, context=self.context)
         return serializer.data
 
 
-# Сериализатор для категорий
-class CategorySerializer(serializers.ModelSerializer):
+# Сериализатор для категорий в виде дерева
+class TreeCategorySerializer(serializers.ModelSerializer):
     # Дочерние категории
     children = RecursiveField(many=True, read_only=True)
 
@@ -38,7 +38,10 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ('id', 'name', 'price', 'children', 'materials')
+        fields = ('id', 'name', 'parent', 'price', 'children', 'materials')
+        extra_kwargs = {
+            'parent': {'write_only': True}
+        }
 
     def get_price(self, obj):
         # Считаем стоимость материалов в текущей категории
@@ -55,9 +58,14 @@ class CategorySerializer(serializers.ModelSerializer):
         return current_materials_price + children_total_price
 
 
+# Сериализатор для категорий в виде плоского списка
 class FlatCategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'parent']
+        extra_kwargs = {
+            'parent': {'write_only': True}
+        }
+
 
