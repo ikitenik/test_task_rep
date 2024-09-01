@@ -38,7 +38,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ('id', 'name', 'parent', 'price', 'children', 'materials')
+        fields = ('id', 'name', 'price', 'children', 'materials')
 
     def get_price(self, obj):
         # Считаем стоимость материалов в текущей категории

@@ -49,6 +49,7 @@ data_cat = {
 url_cat_list = 'http://localhost:8000/api/flat/'
 #post(url_cat, data_cat)
 #post(url_mat, data_mat)
+get(url_cat)
 get(url_cat_list)
 #put(url, 2, data)
 #post(url_cat, data_cat)
