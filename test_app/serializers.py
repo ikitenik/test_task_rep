@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Material, Category
 from django.db.models import Sum
+from mptt.forms import TreeNodeChoiceField
 import logging
 logger = logging.getLogger(__name__)
 
@@ -55,7 +56,16 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class FlatCategorySerializer(serializers.ModelSerializer):
-    materials = MaterialSerializer(many=True, read_only=True)
+    full_name = serializers.SerializerMethodField()
     class Meta:
         model = Category
-        fields = ['id', 'name', 'materials']
+        fields = ['full_name']
+
+    def get_full_name(self, obj):
+        names = [obj.name]
+        parent = obj.parent
+        while parent is not None:
+            names.insert(0, parent.name)
+            parent = parent.parent
+        return ' '.join(names)
+    

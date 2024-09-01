@@ -18,6 +18,17 @@ class FlatCategoryViewSet(ModelViewSet):
     serializer_class = FlatCategorySerializer
 
 
+class TestAPIView(APIView):
+    def get(self, request):
+        pass
+
+        '''
+        #queryset = Category.objects.all()
+        category = ModelChoiceField(queryset=Category.objects.all())
+        serializer = BookSerializer(category, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        '''
+
 class MaterialViewSet(ModelViewSet):
     queryset = Material.objects.all()
     serializer_class = MaterialSerializer

@@ -8,4 +8,5 @@ router.register(r'materials', views.MaterialViewSet)
 
 urlpatterns = [
     path('upload/', views.UploadExcelAPIView.as_view()),
+    path('test/', views.TestAPIView.as_view()),
 ] + router.urls
