@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from django.http import Http404
 from .models import Material, Category
-from .serializers import MaterialSerializer, TreeCategorySerializer, FlatCategorySerializer
+from .serializers import MaterialSerializer, TreeCategorySerializer, ListCategorySerializer
 import pandas as pd
 from rest_framework.viewsets import ModelViewSet
 
@@ -24,9 +24,9 @@ class TreeCategoryViewSet(ModelViewSet):
     serializer_class = TreeCategorySerializer
 
 
-class FlatCategoryViewSet(ModelViewSet):
+class ListCategoryViewSet(ModelViewSet):
     queryset = Category.objects.all()
-    serializer_class = FlatCategorySerializer
+    serializer_class = ListCategorySerializer
 
 
 class MaterialViewSet(ModelViewSet):

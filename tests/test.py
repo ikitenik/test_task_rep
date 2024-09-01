@@ -44,8 +44,8 @@ data_mat = {
     'price': 3000,
 }
 
-url_cat_tree = 'http://localhost:8000/api/categories/'
-url_cat_list = 'http://localhost:8000/api/flat/'
+url_cat_tree = 'http://localhost:8000/api/categories/tree/'
+url_cat_list = 'http://localhost:8000/api/categories/list/'
 data_cat = {
      "name": "Test12",
      "parent": 21,
@@ -56,10 +56,10 @@ data_cat = {
 #delete(url_cat_list, 26)
 #put(url_cat, 25, data_cat)
 #post(url_mat, data_mat)
-#get(url_cat_tree, 21)
+get(url_cat_list)
 #get(url_cat_list)
 #put(url, 2, data)
-post(url_cat_tree, data_cat)
+#post(url_cat_tree, data_cat)
 #post(url_mat, data_mat)
 #get(url_type)
 

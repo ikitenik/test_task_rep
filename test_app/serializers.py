@@ -59,7 +59,7 @@ class TreeCategorySerializer(serializers.ModelSerializer):
 
 
 # Сериализатор для категорий в виде плоского списка
-class FlatCategorySerializer(serializers.ModelSerializer):
+class ListCategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
